@@ -66,6 +66,12 @@ module.exports.editListing = async (req, res) => {
 
 // update controller
 module.exports.updateListing = async (req, res) => {
+    let { id } = req.params;
+    let coordinate = await geocodingClient.forwardGeocode({
+        query: req.body.listing.location,
+        limit: 1,
+    })
+        .send()
 
     let listing = await Listing.findByIdAndUpdate(id, { ...req.body.listing });
 
@@ -73,6 +79,7 @@ module.exports.updateListing = async (req, res) => {
         let url = req.file.path;
         let filename = req.file.filename;
         listing.image = { url, filename };
+        listing.geometry = coordinate.body.features[0].geometry;
         await listing.save();
     }
 
