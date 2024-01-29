@@ -38,6 +38,11 @@ module.exports.userBlogs = (req, res) => {
     res.render("users/blogs.ejs", { user: req.user });
 };
 
+// home controller
+module.exports.home = (req, res) => {
+    res.render("users/home.ejs");
+};
+
 //  about route controller
 module.exports.about = (req, res) => {
     res.render("users/about.ejs");

@@ -1,9 +1,9 @@
 <style>
-    .search-btn {
+   .search-btn {
         background-color: red;
         color: white;
         border-radius: 25px;
-        padding: 0 1rem 0 1rem;
+        padding: 0.5rem 1rem;
     }
 
     .search-btn:hover {
@@ -16,16 +16,41 @@
         margin-right: 0.5rem;
     }
 
-    .search-inp{
+    .search-inp {
         border-radius: 25px;
-        padding: 0.5rem 3rem 0.5rem 3rem;
+        padding: 0.5rem 1rem;
+    }
+
+    @media (max-width: 767px) {
+        .navbar-nav {
+            text-align: center;
+            margin-top: 10px;
+           
+        }
+
+        .navbar-nav a {
+            margin: 0.5rem;
+           
+        }
+
+        .navbar-nav.ms-auto {
+            margin-top: 0;
+           
+        }
+
+        .search-inp,
+        .search-btn {
+            width: 100%;
+            margin-top: 10px;
+            
+        }
     }
 </style>
 
 <nav class="navbar navbar-expand-lg bg-body-light border-bottom sticky-top">
     <div class="container-fluid">
 
-        <a class="navbar-brand" href="/listings"><i class="fa-solid fa-compass"></i></a>
+        <a class="navbar-brand" href="/"><i class="fa-solid fa-compass"></i></a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
             aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,9 +76,9 @@
                     <a class="nav-link" href="/login">LogIn</a>
                     <%}%>
                         <% if(currUser){ %>
-                            <b><a class="nav-link" href="/profile/<%= currUser._id %>">
+                            <b><u><a class="nav-link" href="/profile/<%= currUser._id %>">
                                     <%= currUser.username %>
-                                </a></b>
+                                </u></a></b>
                             <%}%>
             </div>
         </div>

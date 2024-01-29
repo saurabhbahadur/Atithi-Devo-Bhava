@@ -13,6 +13,8 @@ router.get("/signup", userController.renderSignUpForm);
 // signup route post
 router.post("/signup", wrapAsync(userController.signUp));
 
+// home
+router.get("/",  userController.home);
 
 // profile 
 router.get("/profile/:id", isLoggedIn, userController.userProfile);
