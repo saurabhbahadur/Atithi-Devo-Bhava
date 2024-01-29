@@ -14,7 +14,7 @@ module.exports.signUp = async (req, res) => {
         let { email, username, password } = req.body;
         const newUser = new User({ email, username });
         const registeredUser = await User.register(newUser, password);
-        console.log(registeredUser);
+        
         req.login(registeredUser, (err) => {
             if (err) {
                 return next(err);
@@ -59,7 +59,7 @@ module.exports.renderLoginForm = (req, res) => {
 
 module.exports.logIn = async (req, res) => {
     console.log("Login route handler executed");
-    console.log(passport.authenticate);
+    
     req.flash("success", "Welcome to wanderlust");
     let redirectUrl = res.locals.redirectUrl || "/profile/" + req.user._id;
     res.redirect(redirectUrl);

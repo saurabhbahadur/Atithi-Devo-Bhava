@@ -24,7 +24,7 @@ module.exports.showListing = async (req, res) => {
             populate: { path: "author", },
         })
         .populate("owner");
-    console.log(listing);
+
     res.render("listings/show.ejs", { listing });
 };
 
@@ -37,7 +37,7 @@ module.exports.createNewListing = async (req, res, next) => {
     })
         .send()
 
-        console.log(coordinate.body.features[0].geometry);
+        
 
     let url = req.file.path;
     let filename = req.file.filename;

@@ -5,7 +5,7 @@ const ExpressError = require("./utils/ExpressError.js");
 
 
 module.exports.isLoggedIn = (req, res, next) => {
-    console.log(req.user);
+    
 
     if (!req.isAuthenticated()) {
         req.session.redirectUrl = req.originalUrl;
@@ -33,7 +33,7 @@ module.exports.isOwner = async (req, res, next) => {
 };
 
 module.exports.validateListing = (req, res, next) => {
-    console.log("Validate Listing:", req.body);
+    
     let { error } = listingSchema.validate(req.body);
 
     if (error) {
