@@ -135,7 +135,13 @@ f-info-brand {
 /* media query */
 
 
-@media (max-width: 600px) {
+@media (max-width: 1000px) {
+
+    .container-fluid{
+        background-color: white;
+    }
+    
+
     .navbar-nav {
         text-align: center;
         
@@ -195,11 +201,11 @@ f-info-brand {
         width: 100%;
     }
     .review-card{
-        width: 100%;
+        width: 40vh;
     }
     
     #map{
-        width: 65vh;
+        width: 40vh;
     }
     
 }
