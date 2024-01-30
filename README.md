@@ -8,15 +8,20 @@ coming soon.........
 
 + `Fork` this repository and open in your VS code or any IDE
 + Then run the below comand to install `node_module`
+
+
   ```
     npm i
   ```
-+ Now check the Project Documentation for further details
+
+
++ Now check the [Project Documentation](https://github.com/saurabhbahadur/couchSurfing/blob/main/documentation.md) for further details
 
 others details also in process till you can read Documentaion
 
 __Thank You__
 
++ ## Deployment included
 
 
 ---
