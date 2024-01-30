@@ -1,6 +1,24 @@
 <h1 align="center" > Couchsurfing</h1> <p align="center"></p>
 
 
+<h1>Introduction</h1>
+coming soon.........
+
+## Get Started
+
++ `Fork` this repository and open in your VS code or any IDE
++ Then run the below comand to install `node_module`
+  ```
+    npm i
+  ```
++ Now check the Project Documentation for further details
+
+others details also in process till you can read Documentaion
+
+__Thank You__
+
+
+
 ---
 
 <h3 align="center">Connect with me:</h3>
