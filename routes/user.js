@@ -5,7 +5,9 @@ const wrapAsync = require("../utils/wrapAsync");
 const passport = require("passport");
 const { isLoggedIn, saveRedirectUrl } = require("../middleware.js");
 const userController = require("../controllers/user.js");
-
+const multer = require('multer');
+const { storage } = require("../cloudConfig.js");
+const upload = multer({ storage });
 
 //  signup route get
 router.get("/signup", userController.renderSignUpForm);
