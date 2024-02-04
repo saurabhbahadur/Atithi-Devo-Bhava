@@ -1,4 +1,27 @@
-<h1 align="center" > Couchsurfing</h1> <p align="center"></p>
+<h1 align="center" >Atithi Devo Bhava</h1> <p align="center"></p>
+
+
+<h1>Introduction</h1>
+coming soon.........
+
+## Get Started
+
++ `Fork` this repository and open in your VS code or any IDE
++ Then run the below comand to install `node_module`
+
+
+  ```
+    npm i
+  ```
+
+
++ Now check the [Project Documentation](https://github.com/saurabhbahadur/couchSurfing/blob/main/documentation.md) for further details
+
+others details also in process till you can read Documentaion
+
+__Thank You__
+
++ ## Deployment included
 
 
 ---
