@@ -1,0 +1,32 @@
+<% layout("/layouts/boilerplate") %>
+
+
+    <div class="col-8 mt-3 offset-3">
+        <h1> Edit Profile </h1>
+                     
+        <form action="/profile/<%= user._id %>/editProfile?_method=PUT" method="post" novalidate
+            enctype="multipart/form-data" class="needs-validation">
+
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label>
+                <input required name="name" class="form-control" value="<%= user.name %>" type="text">
+                <div class="invalid-feedback">Please Enter Title</div>
+            </div>
+            <div class="mb-3">
+                <label for="about" class="form-label">About:</label>
+                <textarea required name="about" class="form-control"><%= user.about %></textarea>
+                <div class="invalid-feedback">Please Enter Description</div>
+            </div>
+            <div class="mb-3">
+                <label for="image" class="form-label">Upload Profile</label>
+                <input required name="image" class="form-control" type="file">
+                <div class="invalid-feedback">Please Select image</div>
+            </div>
+            <div class="mb-3">
+                <label for="address" class="form-label">Address:</label>
+                <textarea required name="address" class="form-control"></textarea>
+                <div class="invalid-feedback">Please Enter Description</div>
+            </div>
+            <button class="btn btn-dark">Edit</button>
+        </form>
+    </div>

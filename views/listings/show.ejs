@@ -18,26 +18,26 @@
                     <div class="card-text mt-3">
                         <p> Owned by: <i>@<%= listing.owner.username %></i></p>
                         <p>
-                            <%= listing.description %>
+                            <b>Description:</b> <%= listing.description %>
                         </p>
-                        <p> &#8377; <%= listing.price.toLocaleString("en-IN") %>
-                        </p>
-                        <p>
-                            <%= listing.location %>
+                        <p> <b>Phone:</b> <%= listing.price %>
                         </p>
                         <p>
-                            <%= listing.country %>
+                            <b>Location:</b> <%= listing.location %>
+                        </p>
+                        <p>
+                            <b>Country:</b> <%= listing.country %>
                         </p>
                     </div>
                 </div>
             </div>
             <%if( currUser && currUser._id.equals(listing.owner._id)){%>
-                <div class="btns">
-                    <a href="/listings/<%=listing._id%>/edit" class="btn col-1 offset-2 btn-dark"><i class="fa-solid fa-pen-to-square"></i></a>
+                <div class="btns offset-2">
+                    <a href="/listings/<%=listing._id%>/edit" class="btn btn-col btn-dark"><i class="fa-solid fa-pen-to-square"></i></a>
 
 
-                    <form action="/listings/<%=listing._id%>?_method=DELETE" method="post">
-                        <button class="btn offset-4 btn-dark"><i class="fa-solid fa-trash"></i></button>
+                    <form action="/listings/<%=listing._id%>?_method=DELETE" class="ms-3" method="post">
+                        <button class="btn  btn-outline-danger"><i class="fa-solid fa-trash"></i></button>
                     </form>
                 </div>
                 <%}%>

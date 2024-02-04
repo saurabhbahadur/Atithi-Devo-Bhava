@@ -1,20 +1,24 @@
 <% layout("/layouts/boilerplate") %>
-<style>
-    #filters{
-        display: flex;
-        flex-wrap: wrap;
-    }
-    .filter{
-        text-align: center;
-        margin-top: 2rem;
-        margin-right: 2rem;
-        opacity: 0.7;
-    }
-    .filter:hover{
-        opacity: 1;
-        cursor: pointer;
-    }
-</style>
+    <style>
+        #filters {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .filter {
+            color: #DC661F;
+            text-align: center;
+            margin-top: 2rem;
+            margin-right: 2rem;
+            opacity: 0.7;
+        }
+
+        .filter:hover {
+            opacity: 1;
+            cursor: pointer;
+        }
+    </style>
+
     <body>
         <div class="offset-3" id="filters">
             <div class="filter">
@@ -42,29 +46,26 @@
             <% for (let listing of allListings){ %>
                 <a href="/listings/<%= listing._id %>" class="listing-link">
                     <div class="card listing-card col">
-                        <img src="<%=listing.image.url  %>" class="card-img-top" alt="listing_image" style="height: 20rem;">
+                        <img src="<%=listing.image.url  %>" class="card-img-top" alt="listing_image"
+                            style="height: 20rem;">
                         <div class="card-img-overlay">
-                            hello
+                            <%= listing.title%>
                         </div>
                         <div class="card-body">
                             <p class="card-text">
-                                <b>
-                                    <%= listing.title %>
-                                </b><br>
-                                &#8377; <%= listing.price.toLocaleString("en-IN")%> /night
+
+                                <%= listing.title %>
+                            </p>
+                            <p class="card-text">
+                                <b><i>Phone:</i></b>
+                                <%= listing.price%> <br>
+                                    <b> <i>Location:</i></b>
+                                    <%= listing.location%> <br>
+
                             </p>
                         </div>
                     </div>
                 </a>
                 <% } %>
         </div>
-
-
-        <!-- <ul>
-        <% for (let listing of allListings){ %>
-            <li><a href="/listings/<%= listing._id %>">
-                    <%= listing.title %>
-                </a></li>
-            <% } %>
-    </ul> -->
     </body>

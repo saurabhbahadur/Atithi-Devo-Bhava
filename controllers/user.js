@@ -28,25 +28,6 @@ module.exports.signUp = async (req, res) => {
     }
 };
 
-//  profile route controller
-module.exports.userProfile = (req, res) => {
-    res.render("users/profile.ejs", { user: req.user });
-};
-
-//  blog route controller
-module.exports.userBlogs = (req, res) => {
-    res.render("users/blogs.ejs", { user: req.user });
-};
-
-// home controller
-module.exports.home = (req, res) => {
-    res.render("users/home.ejs");
-};
-
-//  about route controller
-module.exports.about = (req, res) => {
-    res.render("users/about.ejs");
-};
 
 // login get 
 
@@ -64,6 +45,83 @@ module.exports.logIn = async (req, res) => {
     let redirectUrl = res.locals.redirectUrl || "/profile/" + req.user._id;
     res.redirect(redirectUrl);
 };
+
+
+
+//  profile route controller
+module.exports.userProfile = (req, res) => {
+    res.render("users/profile.ejs", { user: req.user });
+};
+
+
+// userController.js
+
+// editProfile controller get
+module.exports.editProfile = async (req, res) => {
+    console.log("Edit Profile Controller reached");
+    try {
+        let { id } = req.params;
+        const user = await User.findById(id);
+        if (!user) {
+            req.flash("error", "This page is not available");
+            res.redirect("/listings");
+        }
+        let originalProfileUrl = profileImage.image.url;
+        originalProfileUrl = originalProfileUrl.replace("/upload", "/upload/w_250");
+        res.render("users/editProfile.ejs", { user ,originalProfileUrl });
+    } catch (error) {
+        console.error(error);
+        req.flash("error", "Error loading profile");
+        res.redirect("/listings");
+    }
+};
+
+// updateProfile controller put
+module.exports.updateProfile = async (req, res) => {
+    console.log("Update Profile Controller reached");
+    try {
+        let { id } = req.params;
+        const updatedUserData = req.body;
+
+        // Update user data
+        await User.findByIdAndUpdate(id, { $set: updatedUserData });
+
+        // Handle profile image update
+        if (req.file) {
+            let url = req.file.path;
+            let filename = req.file.filename;
+
+            // Update the profileImage field
+            await User.findByIdAndUpdate(id, { 
+                profileImage: { url, filename } 
+            });
+        }
+
+        req.flash("success", "Profile Updated!");
+        res.redirect(`/profile/${id}`);
+    } catch (error) {
+        console.error(error);
+        req.flash("error", "Error updating profile");
+        res.redirect(`/profile/${id}`);
+    }
+};
+
+
+//  blog route controller
+module.exports.userBlogs = (req, res) => {
+    res.render("users/blogs.ejs", { user: req.user });
+};
+
+// home controller
+module.exports.home = (req, res) => {
+    res.render("users/home.ejs");
+};
+
+//  about route controller
+module.exports.about = (req, res) => {
+    res.render("users/about.ejs");
+};
+
 
 
 // logout route

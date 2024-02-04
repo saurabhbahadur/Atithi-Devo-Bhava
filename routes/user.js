@@ -16,8 +16,15 @@ router.post("/signup", wrapAsync(userController.signUp));
 // home
 router.get("/",  userController.home);
 
-// profile 
-router.get("/profile/:id", isLoggedIn, userController.userProfile);
+// profile route
+router.get("/profile/:id/", isLoggedIn,  wrapAsync(userController.userProfile));
+
+// profile edit route
+router.get("/profile/:id/editProfile", isLoggedIn, upload.single("image"), wrapAsync(userController.editProfile));
+
+// profile update edit route put
+router.put("/profile/:id/editProfile",isLoggedIn, upload.single("image"), wrapAsync(userController.updateProfile));
+
 
 // blogs
 router.get("/blogs", isLoggedIn, userController.userBlogs);
