@@ -36,8 +36,6 @@ router.get("/logout", userController.logOut);
 router.get("/",  userController.home);
 
 
-
-
 // profile edit route
 router.get("/profile/:id/editProfile", isLoggedIn, upload.single("image"), wrapAsync(userController.editProfile));
 
