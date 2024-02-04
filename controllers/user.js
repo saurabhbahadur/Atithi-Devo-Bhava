@@ -14,7 +14,7 @@ module.exports.signUp = async (req, res) => {
         let { email, username, password } = req.body;
         const newUser = new User({ email, username });
         const registeredUser = await User.register(newUser, password);
-        
+        console.log(registeredUser);
         req.login(registeredUser, (err) => {
             if (err) {
                 return next(err);
@@ -40,19 +40,18 @@ module.exports.renderLoginForm = (req, res) => {
 
 module.exports.logIn = async (req, res) => {
     console.log("Login route handler executed");
-    
+    console.log(passport.authenticate);
     req.flash("success", "Welcome to wanderlust");
     let redirectUrl = res.locals.redirectUrl || "/profile/" + req.user._id;
     res.redirect(redirectUrl);
+    return;
 };
-
 
 
 //  profile route controller
 module.exports.userProfile = (req, res) => {
     res.render("users/profile.ejs", { user: req.user });
 };
-
 
 // userController.js
 
@@ -107,15 +106,25 @@ module.exports.updateProfile = async (req, res) => {
 };
 
 
+
 //  blog route controller
-module.exports.userBlogs = (req, res) => {
-    res.render("users/blogs.ejs", { user: req.user });
+module.exports.userBlogs = async (req, res) => {
+    try {
+        let { username, "listing[posts]": message } = req.body;
+        console.log(req.body);
+        res.render("users/blogs.ejs", { user: req.user, username, message });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal Server Error");
+    }
 };
+
 
 // home controller
 module.exports.home = (req, res) => {
     res.render("users/home.ejs");
 };
+
 
 //  about route controller
 module.exports.about = (req, res) => {
