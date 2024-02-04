@@ -15,6 +15,7 @@ router.get("/signup", userController.renderSignUpForm);
 // signup route post
 router.post("/signup", wrapAsync(userController.signUp));
 
+
 //  login route get
 router.get("/login", userController.renderLoginForm);
 
@@ -23,44 +24,36 @@ router.get("/login", userController.renderLoginForm);
 router.post(
     "/login", saveRedirectUrl, passport.authenticate("local", { failureRedirect: "login", failureFlash: true, }), userController.logIn);
 
+    // profile route
+router.get("/profile/:id/", isLoggedIn,  wrapAsync(userController.userProfile));
+
 
 // logout route
 router.get("/logout", userController.logOut);
 
 
-
 // home
-router.get("/", userController.home);
+router.get("/",  userController.home);
 
 
-// profile route
-router.get("/profile/:id/", isLoggedIn, wrapAsync(userController.userProfile));
+
 
 // profile edit route
 router.get("/profile/:id/editProfile", isLoggedIn, upload.single("image"), wrapAsync(userController.editProfile));
 
+
 // profile update edit route put
-router.put("/profile/:id/editProfile", isLoggedIn, upload.single("image"), wrapAsync(userController.updateProfile));
+// router.put("/profile/:id/editProfile",isLoggedIn, upload.single("image"), wrapAsync(userController.updateProfile));
+router.put("/profile/:id/editProfile",isLoggedIn, upload.single("image"), wrapAsync(userController.updateProfile));
 
 
 // blogs
 router.get("/blogs", isLoggedIn, userController.userBlogs);
 
 // about
-router.get("/about", userController.about);
+router.get("/about",  userController.about);
 
 
-//  login route get
-router.get("/login", userController.renderLoginForm);
-
-
-//   login post route
-router.post(
-    "/login", saveRedirectUrl, passport.authenticate("local", { failureRedirect: "login", failureFlash: true, }), userController.logIn);
-
-
-// logout route
-router.get("/logout", userController.logOut);
 
 
 module.exports = router;
