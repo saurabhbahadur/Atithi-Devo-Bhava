@@ -65,8 +65,13 @@ module.exports.editProfile = async (req, res) => {
             req.flash("error", "This page is not available");
             res.redirect("/listings");
         }
-        let originalProfileUrl = profileImage.image.url;
-        originalProfileUrl = originalProfileUrl.replace("/upload", "/upload/w_250");
+         // Check if profileImage is present in the user object
+         let originalProfileUrl = user.profileImage ? user.profileImage.url : null;
+
+         if (originalProfileUrl) {
+             // Modify the URL if needed
+             originalProfileUrl = originalProfileUrl.replace("/upload", "/upload/w_250");
+         }
         res.render("users/editProfile.ejs", { user ,originalProfileUrl });
     } catch (error) {
         console.error(error);
