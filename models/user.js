@@ -9,15 +9,15 @@ const userSchema = new Schema({
     },
     name: {
         type: String,
-        required: true,
+        default: "your name",
     },
     address: {
         type: String,
-        required: true,
+        default: " your country",
     },
     about: {
         type: String,
-        required: true,
+        default: "about",
     },
     profileImage: {
         url: {
