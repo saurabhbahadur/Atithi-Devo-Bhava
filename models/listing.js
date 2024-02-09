@@ -14,8 +14,8 @@ const listingSchema = new Schema({
     },
     price: {
         type: Number,
-        min: 10,
-        max: 10
+        min: 1,
+        max: 1000000000,
     },
     location: String,
     country: String,
