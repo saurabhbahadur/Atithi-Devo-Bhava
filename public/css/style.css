@@ -286,6 +286,16 @@ f-info-brand {
     
 }
 
+/* Profile icon show.ejs */
+.profileImageIcon img{
+    background-size: contain;
+    height: 2rem;
+    width: 2rem;
+    border-radius: 50%;
+    
+}
+
+
 .heading{
     padding: 1rem;
     font-size: 2.5rem;
