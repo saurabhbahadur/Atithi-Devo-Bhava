@@ -16,7 +16,7 @@
                 <img src="<%= listing.image.url %>" class="card-img-top show-img" alt="listing_image">
                 <div class="card-body">
                     <div class="card-text mt-3">
-                        <p> Owned by: <i>@<%= listing.owner.username %></i></p>
+                        <p class="profileImageIcon"><img src="<%=listing.owner.profileImage.url%>" alt=""><%= listing.owner.username %></p>
                         <p>
                             <b>Description:</b> <%= listing.description %>
                         </p>
