@@ -45,9 +45,12 @@
                       Date not available
                       <% } %>
               </p>
+              <p class="profileImageIcon"><img src="<%= post.author.profileImage.url %>" alt="">
+                <%= post.author.username %>
+              </p>
               <form action="/blogs/<%= post._id %>/delete%>?_method=DELETE" class="mb-3" method="post">
                 <%if( currUser && currUser._id.equals(post.author._id)){%>
-                  <button class="btn btn-sm btn-dark"><i class="fa-solid fa-trash"></i></button>
+                  <button class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></button>
                   <%}%>
               </form>
             </div>
