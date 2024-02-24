@@ -45,9 +45,6 @@ router.get("/profile/:id/editProfile", isLoggedIn, upload.single("image"), wrapA
 router.put("/profile/:id/editProfile",isLoggedIn, upload.single("image"), wrapAsync(userController.updateProfile));
 
 
-// blogs
-router.get("/blogs", isLoggedIn, userController.userBlogs);
-
 // about
 router.get("/about",  userController.about);
 

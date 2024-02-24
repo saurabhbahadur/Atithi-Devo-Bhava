@@ -112,17 +112,123 @@ module.exports.updateProfile = async (req, res) => {
 
 
 
-//  blog route controller
-module.exports.userBlogs = async (req, res) => {
-    try {
-        let { username, "listing[posts]": message } = req.body;
-        console.log(req.body);
-        res.render("users/blogs.ejs", { user: req.user, username, message });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("Internal Server Error");
-    }
-};
+
+// blog route controller
+// blog route controller
+// module.exports.userBogs = async (req, res) => {
+//     try {
+//         // Check if there's an ID parameter in the URL
+//         const { id } = req.params;
+//         const currentUser = req.user;
+
+//         // Check if an ID is provided
+//         if (id) {
+//             // Fetch blogs for the specified user
+//             const user = await User.findById(id);
+//             if (!user) {
+//                 console.log("User not found");
+//                 return res.status(404).send("User not found");
+//             }
+//             // Render the blogs page with the user's blogs
+//             res.render("users/blogs.ejs", { currentUser, id, posts: user.posts });
+//         } else {
+//             // Fetch blogs from all users
+//             const allUsers = await User.find();
+//             const allPosts = allUsers.flatMap(user => user.posts);
+//             // Render the blogs page with posts from all users
+//             res.render("users/blogs.ejs", { currentUser, posts: allPosts });
+//         }
+//     } catch (error) {
+//         console.error("Error:", error);
+//         res.status(500).send("Internal Server Error");
+//     }
+// };
+
+// module.exports.userBlogs = async (req, res) => {
+//     try {
+//         // Check if there's an ID parameter in the URL
+//         const { id } = req.params;
+       
+//         // Check if an ID is provided
+//         if (id) {
+//             // Fetch blogs for the specified user
+//             const user = await User.findById(id);
+//             const currentUser = req.user;
+//             if (!user) {
+//                 console.log("User not found");
+//                 return res.status(404).send("User not found");
+//             }
+//             // Render the blogs page with the user's blogs
+//             res.render("users/blogs.ejs", { currentUser : currentUser, id: id, posts: user.posts });
+//         } else {
+//             // Fetch blogs from all users
+//             const allUsers = await User.find();
+//             const allPosts = allUsers.flatMap(user => user.posts);
+//             // Render the blogs page with posts from all users
+//             res.render("users/blogs.ejs", { posts: allPosts });
+//         }
+//     } catch (error) {
+//         console.error("Error:", error);
+//         res.status(500).send("Internal Server Error");
+//     }
+// };
+// userController.js
+
+// Controller function to handle posting in blogs or feeds
+// module.exports.postInBlogs = async (req, res) => {
+//     try {
+//         const { title, message } = req.body;
+        
+//         // Find the current user
+//         const currentUser = req.user;
+//         if (!currentUser) {
+//             throw new Error("User not found");
+//         }
+        
+//         // Ensure the currentUser.posts array exists, if not, initialize it
+//         currentUser.posts = currentUser.posts || [];
+        
+//         // Create the new blog post object
+//         const newPost = {
+//             title: title,
+//             message: message
+//         };
+        
+//         // Add the new post to the user's posts array
+//         currentUser.posts.push(newPost);
+//         await currentUser.save();
+
+//         req.flash("success", "Successfully posted in blogs.");
+//         res.redirect('/blogs');
+//     } catch (err) {
+//         console.error(err);
+//         req.flash("error", "Failed to post in blogs.");
+//         res.redirect('/blogs');
+//     }
+// };
+
+// // Controller function to delete a blog post
+// module.exports.deletePost = async (req, res) => {
+//     try {
+//         const { id } = req.params;
+//         const post = await BlogPost.findById(id);
+
+//         // Check if the current user is the creator of the post
+//         if (!post.author.equals(req.user._id)) {
+//             req.flash("error", "You are not authorized to delete this post.");
+//             return res.redirect("/blogs");
+//         }
+
+//         // If user is authorized, delete the post
+//         await BlogPost.findByIdAndDelete(id);
+//         req.flash("success", "Post deleted successfully.");
+//         res.redirect("/blogs");
+//     } catch (err) {
+//         console.error(err);
+//         req.flash("error", "Failed to delete post.");
+//         res.redirect("/blogs");
+//     }
+// };
 
 
 // home controller

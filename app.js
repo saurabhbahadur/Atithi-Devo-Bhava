@@ -11,6 +11,7 @@ const ejsMate = require("ejs-mate");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
+const BlogPost = require("./models/blog.js");
 const ExpressError = require("./utils/ExpressError.js");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
@@ -87,14 +88,16 @@ async function main() {
     await mongoose.connect(dbURL);
 }
 
-// app.get("/", (req, res) => {
-//     res.send("main page");
+// app.get("/blogs", (req, res) => {
+//     res.render("blogs/index.ejs");
 // });
 
 
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
+const blogRouter = require("./routes/blogRoutes.js");
+
 
 
 //  local strategy
@@ -105,7 +108,7 @@ passport.use(new LocalStrategy(User.authenticate()));
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/", userRouter);
-
+app.use("/blogs", blogRouter);
 
 //  Express error
 app.all("*", (req, res, next) => {
@@ -114,7 +117,7 @@ app.all("*", (req, res, next) => {
 
 app.use((err, req, res, next) => {
     let { statusCode = 500, message = "Something went wrong" } = err;
-    res.status(statusCode).render("error.ejs", { message });
+   return res.status(statusCode).render("error.ejs", { message });
     // res.status(statusCode).send(message);
 });
 

@@ -13,7 +13,7 @@ const userSchema = new Schema({
     },
     address: {
         type: String,
-        default: " your country",
+        default: "your country",
     },
     about: {
         type: String,

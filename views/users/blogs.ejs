@@ -4,7 +4,7 @@
     <div class="col-5  offset-3">
 
       <h1 class="heading">Feeds</h1>
-      <form class="mb-3" action="/blog" method="post" novalidate class="needs-validation">
+      <form class="mb-3" action="/blogs" method="post" novalidate class="needs-validation">
         <div class="mb-3">
           <label for="username" class="form-label">Title</label>
           <input required name="title" class="form-control" placeholder="enter title" type="text">
@@ -12,7 +12,7 @@
         </div>
         <div class="mb-3">
           <label for="posts" class="form-label">Message</label>
-          <textarea required name="listing[posts]" class="form-control"></textarea>
+          <textarea required name="message" class="form-control"></textarea>
           <div class="invalid-feedback">Please Enter Message</div>
         </div>
 
@@ -20,84 +20,28 @@
 
       </form>
 
-      <div class="card p-3 mb-3 mt-3 col">
-
-        <div class="card-body">
-          <p class="card-text">
-            <b>
-              Jaipur, Rajasthan
-            </b><br>
-            Welcome to the Pink City! I have a cozy couch available for anyone looking to explore the vibrant culture
-            and majestic architecture of Jaipur. Whether you're here for the stunning palaces, bustling markets, or
-            mouthwatering street food, my home is your home. Let's share stories and create unforgettable memories
-            together
-          </p>
-        </div>
-
-      </div>
-      <div class="card p-3 mb-3 mt-3 col">
-
-        <div class="card-body">
-          <p class="card-text">
-            <b>
-              Goa
-            </b><br>
-            Hey wanderers! If you're heading to Goa and need a place to crash, look no further. My beachfront apartment
-            is the perfect base for your adventures. From sun-kissed beaches to lively nightclubs, Goa has it all. Come
-            experience the laid-back vibes and endless fun with a local twist. Can't wait to host you
-          </p>
-        </div>
-
-      </div>
-      <div class="card p-3 mb-3 mt-3 col">
-
-        <div class="card-body">
-          <p class="card-text">
-            <b>
-              Dharamshala, Himachal Pradesh
-            </b><br>
-            Namaste travelers! Are you drawn to the serene beauty of the Himalayas? I'm offering a comfy spot in my
-            mountain home in Dharamshala. Whether you're here for spiritual exploration, trekking, or simply to unwind
-            amidst nature, this is the place for you. Let's share chai, stories, and breathtaking views together. See
-            you soon!"
-
-            Location: Varanasi, Uttar Pradesh
-          </p>
-        </div>
-
-      </div>
-      <div class="card p-3 mb-3 mt-3 col">
-
-        <div class="card-body">
-          <p class="card-text">
-            <b>
-              Varanasi, Uttar Pradesh
-            </b><br>
-            Greetings from the spiritual capital of India! If you're planning a trip to Varanasi and want an authentic
-            experience, I've got you covered. My humble abode is nestled in the heart of the city, just steps away from
-            the sacred Ganges River. Immerse yourself in the rituals, ancient temples, and mystical atmosphere that make
-            Varanasi truly unique. Let's explore the soul of India together
-          </p>
-        </div>
-
-      </div>
-      <div class="card p-3 mb-3 mt-3 col">
-
-        <div class="card-body">
-          <p class="card-text">
-            <b>
-              Udaipur, Rajasthan
-            </b><br>
-            Welcome to the Venice of the East! My home in Udaipur offers more than just a place to stay – it's a gateway
-            to Rajasthani royalty and timeless beauty. From the majestic City Palace to the serene Lake Pichola, there's
-            no shortage of wonders to discover. Whether you're a history buff, a romantic at heart, or simply seeking
-            adventure, Udaipur has something for everyone. Come experience the magic firsthand
-          </p>
-        </div>
-
-      </div>
-
-
+      <% if (posts && posts.length> 0) { %>
+        <% posts.forEach(post=> { %>
+          <div class="card p-3 mb-3 mt-3 col">
+            <div class="card-body">
+              <p class="card-text">
+                <b>
+                  <%= post.title %>
+                </b><br>
+                <%= post.message %>
+              </p>
+              <p>
+                <%= new Date(post.createdAt).toLocaleDateString("en-US") %>
+              </p>
+              <% if (currentUser && currentUser._id.toString()===post.author.toString()) { %>
+                <a href="/blogs/<%= post._id %>/delete"><i class="fa fa-trash"></i></a>
+                <% } %>
+            </div>
+          </div>
+          <% }); %>
+            <% } else { %>
+              <p>No posts available.</p>
+              <% } %>
 
 
     </div>
