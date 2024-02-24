@@ -41,7 +41,7 @@ module.exports.renderLoginForm = (req, res) => {
 module.exports.logIn = async (req, res) => {
     console.log("Login route handler executed");
     console.log(passport.authenticate);
-    req.flash("success", "Welcome to wanderlust");
+    req.flash("success", "Welcome to Atithi Devo Bhava");
     let redirectUrl = res.locals.redirectUrl || "/profile/" + req.user._id;
     res.redirect(redirectUrl);
     return;
