@@ -2,6 +2,21 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+const commentSchema = new Schema({
+    text: {
+        type: String,
+        required: true
+    },
+    author: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+});
+
 const blogSchema = new Schema({
     title: {
         type: String,
@@ -11,6 +26,7 @@ const blogSchema = new Schema({
         type: String,
         required: true
     },
+    comments: [commentSchema], // Array to store comments
     createdAt: {
         type: Date,
         default: Date.now
@@ -19,7 +35,11 @@ const blogSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User",
     },
-    // You can include additional fields such as author, tags, etc.
 });
 
-module.exports = mongoose.model('Blog', blogSchema);
+
+
+module.exports = {
+    Blog: mongoose.model('Blog', blogSchema),
+    Comment: mongoose.model('Comment', commentSchema)
+};

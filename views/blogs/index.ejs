@@ -1,64 +1,106 @@
 <% layout("/layouts/boilerplate") %>
 
-  <div class="row mt-3">
-    <div class="col-5 offset-3">
+<div class="row mt-3">
+  <div class="col-lg-8 offset-lg-2 col-md-10 offset-md-1 col-sm-12"> <!-- Adjusted column sizes for responsiveness -->
+    <h1 class="heading">Feeds</h1>
+    <form class="mb-3" action="/blogs" method="post" novalidate class="needs-validation">
+      <div class="mb-3">
+        <label for="username" class="form-label">Title</label>
+        <input required name="title" class="form-control" placeholder="enter title" type="text">
+        <div class="invalid-feedback">Please Enter title</div>
+      </div>
+      <div class="mb-3">
+        <label for="posts" class="form-label">Message</label>
+        <textarea required name="message" class="form-control"></textarea>
+        <div class="invalid-feedback">Please Enter Message</div>
+      </div>
+      <button class="btn btn-col btn-dark">Post</button>
+    </form>
 
-      <h1 class="heading">Feeds</h1>
-      <form class="mb-3" action="/blogs" method="post" novalidate class="needs-validation">
-        <div class="mb-3">
-          <label for="username" class="form-label">Title</label>
-          <input required name="title" class="form-control" placeholder="enter title" type="text">
-          <div class="invalid-feedback">Please Enter title</div>
-        </div>
-        <div class="mb-3">
-          <label for="posts" class="form-label">Message</label>
-          <textarea required name="message" class="form-control"></textarea>
-          <div class="invalid-feedback">Please Enter Message</div>
-        </div>
-
-        <button class="btn btn-col btn-dark">Post</button>
-
-      </form>
-
-      <% if (posts && posts.length> 0) { %>
-        <% posts.forEach(post=> { %>
-          <div class="card p-3 mb-3 mt-3 col">
-            <div class="card-body">
-              <p class="card-text">
-                <b>
-                  <% if (post && post.title) { %>
-                    <%= post.title %>
-                      <% } else { %>
-                        Title not available
-                        <% } %>
-                </b><br>
-                <% if (post && post.message) { %>
-                  <%= post.message %>
-                    <% } else { %>
-                      Message not available
-                      <% } %>
-              </p>
-              <p>
-                <% if (post && post.createdAt) { %>
-                  <%= new Date(post.createdAt).toLocaleDateString("en-US") %>
-                    <% } else { %>
-                      Date not available
-                      <% } %>
-              </p>
-              <p class="profileImageIcon"><img src="<%= post.author.profileImage.url %>" alt="">
-                <%= post.author.username %>
-              </p>
-              <form action="/blogs/<%= post._id %>/delete%>?_method=DELETE" class="mb-3" method="post">
-                <%if( currUser && currUser._id.equals(post.author._id)){%>
-                  <button class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></button>
-                  <%}%>
-              </form>
-            </div>
-          </div>
-          <% }); %>
-            <% } else { %>
-              <p>No posts available.</p>
+    <% if (posts && posts.length > 0) { %>
+      <% posts.forEach(post => { %>
+        <div class="card p-3 mb-3 mt-3">
+          <div class="card-body">
+            <p class="card-text">
+              <b>
+                <% if (post && post.title) { %>
+                  <%= post.title %>
+                <% } else { %>
+                  Title not available
+                <% } %>
+              </b><br>
+              <% if (post && post.message) { %>
+                <%= post.message %>
+              <% } else { %>
+                Message not available
               <% } %>
+            </p>
+            <p class="text-muted" >
+              <% if (post && post.createdAt) { %>
+                 <small> <%= new Date(post.createdAt).toLocaleDateString("en-US") %></small>
+              <% } else { %>
+                Date not available
+              <% } %>
+            </p>
+            <p class="profileImageIcon">
+              <img src="<%= post.author.profileImage.url %>" alt="">
+              <%= post.author.username %>
+            </p>
+            <form action="/blogs/<%= post._id %>/delete?_method=DELETE" class="mb-3" method="post">
+              <% if (currUser && currUser._id.equals(post.author._id)) { %>
+                <button class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></button>
+              <% } %>
+            </form>
 
-    </div>
+            <!-- Comments Section -->
+            <p>Comments</p>
+            <% const maxComments = 2; %>
+            <% const displayedComments = post.comments.slice(0, maxComments); %>
+            <% displayedComments.forEach(comment => { %>
+              <div class="card p-3 mb-3 mt-3">
+                <div class="card-body">
+                  <p class="card-text"><%= comment.text %></p>
+                  <p class="text-muted "> <small><%= new Date(comment.createdAt).toLocaleDateString("en-US") %></small> </p>
+                  <p class="profileImageIcon">
+                    <img src="<%= comment.author.profileImage.url %>" alt="">
+                    <%= comment.author.username %>
+                  </p>
+                </div>
+              </div>
+            <% }); %>
+
+            <% if (post.comments.length > maxComments) { %>
+              <button class="btn btn-dark btn-sm btn-col read-more-comments" data-post-id="<%= post._id %>">Read More Comments</button>
+              <div id="moreComments<%= post._id %>" style="display: none;">
+                <% const remainingComments = post.comments.slice(maxComments); %>
+                <% remainingComments.forEach(comment => { %>
+                  <div class="card p-3 mb-3 mt-3">
+                    <div class="card-body">
+                      <p class="card-text"><%= comment.text %></p>
+                      <p class="text-muted"> <small><%= new Date(comment.createdAt).toLocaleDateString("en-US") %></small> </p>
+                      <p class="profileImageIcon">
+                        <img src="<%= comment.author.profileImage.url %>" alt="">
+                        <%= comment.author.username %>
+                      </p>
+                    </div>
+                  </div>
+                <% }); %>
+              </div>
+            <% } %>
+
+            <!-- Add Comment Form -->
+            <form action="/blogs/<%= post._id %>/comments" method="post">
+              <div class=" mt-3 form-group">
+                <label for="commentText">Add a Comment:</label>
+                <textarea class=" form-control" id="commentText" name="text" rows="3" required></textarea>
+              </div>
+              <button type="submit" class="mt-3 btn btn-dark btn-col">Add Comment</button>
+            </form>
+          </div>
+        </div>
+      <% }); %>
+    <% } else { %>
+      <p>No posts available.</p>
+    <% } %>
   </div>
+</div>

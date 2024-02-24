@@ -7,6 +7,6 @@ const { isLoggedIn } = require("../middleware");
 router.get("/", isLoggedIn ,  userController.userBlogs);
 router.post("/", isLoggedIn , userController.postInBlogs);
 router.delete("/:id/delete", isLoggedIn,   userController.deleteBlog);
-
+router.post("/:id/comments", isLoggedIn, userController.postComment);
 
 module.exports = router;

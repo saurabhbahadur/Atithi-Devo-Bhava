@@ -17,3 +17,13 @@
         }, false)
     })
 })()
+
+// read more button 
+document.querySelectorAll('.read-more-comments').forEach(button => {
+    button.addEventListener('click', () => {
+      const postId = button.getAttribute('data-post-id');
+      const moreCommentsDiv = document.getElementById(`moreComments${postId}`);
+      moreCommentsDiv.style.display = 'block';
+      button.style.display = 'none';
+    });
+  });

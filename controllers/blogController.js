@@ -1,5 +1,5 @@
-const User = require("../models/user");
-const Blog = require("../models/blog");
+const { Blog, Comment } = require("../models/blog");
+
 
 module.exports.userBlogs = async (req, res) => {
     try {
@@ -9,10 +9,10 @@ module.exports.userBlogs = async (req, res) => {
 
         if (id) {
             // Fetch blogs for the specified user and populate the 'author' field
-            posts = await Blog.find({ author: id }).populate('author');
+            posts = await Blog.find({ author: id }).populate('author').populate('comments.author');
         } else {
             // Fetch blogs from all users and populate the 'author' field
-            posts = await Blog.find().populate('author');
+            posts = await Blog.find().populate('author').populate('comments.author');
         }
 
         res.render("blogs/index.ejs", { currentUser, posts }); // Pass currentUser and posts to the template
@@ -74,6 +74,34 @@ module.exports.deleteBlog = async (req, res) => {
     } catch (error) {
         console.error("Error deleting blog:", error);
         req.flash("error", "Failed to delete blog.");
+        res.redirect("/blogs");
+    }
+};
+
+
+
+
+module.exports.postComment = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const blog = await Blog.findById(id);
+        if (!blog) {
+            req.flash("error", "Blog not found.");
+            return res.redirect("/blogs");
+        }
+
+        const { text } = req.body;
+        const author = req.user._id;
+
+        const newComment = new Comment({ text, author });
+        blog.comments.push(newComment);
+        await blog.save();
+
+        req.flash("success", "Comment added successfully.");
+        res.redirect("/blogs");
+    } catch (error) {
+        console.error("Error posting comment:", error);
+        req.flash("error", "Failed to add comment.");
         res.redirect("/blogs");
     }
 };
