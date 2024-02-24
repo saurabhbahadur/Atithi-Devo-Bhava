@@ -26,7 +26,7 @@ const blogSchema = new Schema({
         type: String,
         required: true
     },
-    comments: [commentSchema], // Array to store comments
+    comments: [commentSchema], 
     createdAt: {
         type: Date,
         default: Date.now
