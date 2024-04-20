@@ -154,23 +154,23 @@
 
 ## Now from here we know that we are already using `models` and `views` , So now one more folder we have to create `controllers` for controlling everything.
 
-## So from this we should say that we are using `MVC` framework for building our project
+## So from this we should say that we are using `MVC` architecture for building our project
 
 + Now we have to set our few more steps to achieve `mvc` 
 
 + We are using three routes so we are requiring three routes  
 
     ```js
-
         const listingRouter = require("./routes/listing.js");
         const reviewRouter = require("./routes/review.js");
         const userRouter = require("./routes/user.js");
-
+        const blogRouter = require("./routes/blogRoutes.js");
         // Router routes
         app.use("/listings", listingRouter);
         app.use("/listings/:id/reviews", reviewRouter);
         app.use("/", userRouter);
-    
+        app.use("/blogs", blogRouter);
+
     ```
 
 ## Now we have to make a folder `routes` to set routes of every task , action
@@ -181,11 +181,136 @@
 
 ## Now we are going forward for making one by one all routes
 
+---
+
 <h2 align="center"> Advance Functioning of project </h2>
 
+---
 ## Before starting every routes we have to install and create some middlewares
 
-+ 
+# Middlewares
+
++ Requirements
+
+    ```js
+    const Listing = require("./models/listing.js");
+    const Review = require("./models/review.js");
+    const { listingSchema, reviewSchema } = require("./schema.js");
+    const ExpressError = require("./utils/ExpressError.js");
+
+    ```
++ Login Middleware
+
+    ```js
+        module.exports.isLoggedIn = (req, res, next) => {
+    
+
+    if (!req.isAuthenticated()) {
+        req.session.redirectUrl = req.originalUrl;
+        req.flash("error", "You must logged in to create listing");
+       return res.redirect("/login");
+        
+    }
+    next();
+    };
+    ```
+
++ Redirect url Middleware
+
+    ```js
+    module.exports.saveRedirectUrl = (req, res, next) => {
+    if (req.session.redirectUrl) {
+        return res.locals.redirectUrl = req.session.redirectUrl;
+    }
+    next();
+    };
+    ```
+
++ Owner Middleware
+
+    ```js
+        module.exports.isOwner = async (req, res, next) => {
+    let { id } = req.params;
+    let listing = await Listing.findById(id);
+    if (!listing.owner._id.equals(res.locals.currUser._id)) {
+        req.flash("error", "You are not owner of this listing");
+        return res.redirect(`/listings/${id}`);
+    }
+    next();
+    };
+
+    ```
++ Validate Listing Middleware
+
+    ```js
+        module.exports.validateListing = (req, res, next) => {
+    
+    let { error } = listingSchema.validate(req.body);
+
+    if (error) {
+        let errMsg = error.details.map((el) => el.message).join(",");
+        throw new ExpressError(400, errMsg);
+    } else {
+        next();
+    }
+    };
+
+    ```
+
++ Validate Review Middleware
+
+    ```js
+        module.exports.validateReview = (req, res, next) => {
+    let { error } = reviewSchema.validate(req.body);
+
+    if (error) {
+        let errMsg = error.details.map((el) => el.message).join(",");
+        throw new ExpressError(400, errMsg);
+    } else {
+        next();
+    }
+    };
+    ```
++ Review Owner Middleware
+
+    ```js
+        // Review Owner
+    module.exports.isReviewAuthor = async (req, res, next) => {
+    let { id, reviewId } = req.params;
+    let review = await Review.findById(reviewId);
+    if (!review.author._id.equals(res.locals.currUser._id)) {
+        req.flash("error", "You are not author of this review");
+        return res.redirect(`/listings/${id}`);
+    }
+    next();
+    };
+
+    ```
+ 
+# Utils
+
++ ## Express Error 
+
+    ```js
+    class ExpressError extends Error {
+    constructor(statusCode, message) {
+        super();
+        this.statusCode = statusCode;
+        this.message = message;
+    }
+    }
+
+    module.exports = ExpressError;
+    ```
++ ## WrapAsync 
+
+    ```js
+        module.exports = (fn) => {
+        return (req, res, next) => {
+        fn(req, res, next).catch(next);
+         }
+        }
+    ```
 
 # Setting routes for listings
 
@@ -348,7 +473,7 @@
      
      ```
 
-    ```js
+```js
     // new route form for create
     router.get("/new", isLoggedIn, listingController.renderNewListingForm);
 
@@ -377,3 +502,559 @@
 + ##  Controllers for users
 
     + #### Requirements 
+
+    ```js
+    const User = require("../models/user.js");
+    const passport = require("passport");
+    ```
+    + #### Sign Up Routes
+
+    ```js
+    // signup route get
+    module.exports.renderSignUpForm = (req, res) => {
+    res.render("users/signup.ejs");
+    };
+
+    // signup route post
+
+    module.exports.signUp = async (req, res) => {
+    try {
+        let { email, username, password } = req.body;
+        const newUser = new User({ email, username });
+        const registeredUser = await User.register(newUser, password);
+        console.log(registeredUser);
+        req.login(registeredUser, (err) => {
+            if (err) {
+                return next(err);
+            }
+            req.flash("success", "Your account is created successfullyt");
+            res.redirect("/listings");
+        })
+    } catch (e) {
+        req.flash("error", e.message);
+        res.redirect("/signup");
+    }
+    };
+    ```
+
+    + #### Login Routes
+
+    ```js
+    // login get 
+
+    module.exports.renderLoginForm = (req, res) => {
+    res.render("users/login.ejs");
+    };
+
+
+    //  login route post
+
+    module.exports.logIn = async (req, res) => {
+    console.log("Login route handler executed");
+    console.log(passport.authenticate);
+    req.flash("success", "Welcome to Atithi Devo Bhava");
+    let redirectUrl = res.locals.redirectUrl || "/profile/" + req.user._id;
+    res.redirect(redirectUrl);
+    return;
+    };
+    ```
+    
+    + #### Profile Routes
+
+    ```js
+    //  profile route controller
+    module.exports.userProfile = (req, res) => {
+    res.render("users/profile.ejs", { user: req.user });
+    };
+    ```
+    + #### Edit Profile Routes
+
+    ```js
+        // editProfile controller get
+    module.exports.editProfile = async (req, res) => {
+    console.log("Edit Profile Controller reached");
+    try {
+        let { id } = req.params;
+        const user = await User.findById(id);
+        if (!user) {
+            req.flash("error", "This page is not available");
+            res.redirect("/listings");
+        }
+         // Check if profileImage is present in the user object
+         let originalProfileUrl = user.profileImage ? user.profileImage.url : null;
+
+         if (originalProfileUrl) {
+             // Modify the URL if needed
+             originalProfileUrl = originalProfileUrl.replace("/upload", "/upload/w_250");
+         }
+        res.render("users/editProfile.ejs", { user ,originalProfileUrl });
+    } catch (error) {
+        console.error(error);
+        req.flash("error", "Error loading profile");
+        res.redirect("/listings");
+    }
+    };
+    ```
+
+    + #### Update Profile Routes
+
+    ```js
+    // updateProfile controller put
+    module.exports.updateProfile = async (req, res) => {
+    console.log("Update Profile Controller reached");
+    try {
+        let { id } = req.params;
+        const updatedUserData = req.body;
+
+        // Update user data
+        await User.findByIdAndUpdate(id, { $set: updatedUserData });
+
+        // Handle profile image update
+        if (req.file) {
+            let url = req.file.path;
+            let filename = req.file.filename;
+
+            // Update the profileImage field
+            await User.findByIdAndUpdate(id, { 
+                profileImage: { url, filename } 
+            });
+        }
+
+        req.flash("success", "Profile Updated!");
+        res.redirect(`/profile/${id}`);
+    } catch (error) {
+        console.error(error);
+        req.flash("error", "Error updating profile");
+        res.redirect(`/profile/${id}`);
+    }
+    };
+
+    ```
+    + #### Home Controller Route
+
+    ```js
+    // home controller
+    module.exports.home = (req, res) => {
+    res.render("users/home.ejs");
+    };
+    ```
+    + #### About Controller Route
+
+    ```js
+    //  about route controller
+    module.exports.about = (req, res) => {
+    res.render("users/about.ejs");
+    };
+    ```
+
+    + #### Logout Controller Route
+    
+    ```js
+
+    // logout route
+    module.exports.logOut = (req, res, next) => {
+    req.logout((err) => {
+        if (err) {
+            return next(err);
+        }
+        req.flash("success", "You are logged out");
+        res.redirect("/listings");
+    });
+    };
+    ```
++ ## Routes for Users
+
+     + #### Requirements
+
+        ```js
+        const express = require("express");
+        const router = express.Router();
+        const User = require("../models/user.js");
+        const wrapAsync = require("../utils/wrapAsync");
+        const passport = require("passport");
+        const { isLoggedIn, saveRedirectUrl } = require("../middleware.js");
+        const userController = require("../controllers/user.js");
+        const multer = require('multer');
+        const { storage } = require("../cloudConfig.js");
+        const upload = multer({ storage });
+        ```
+
+        ```js
+        
+        //  signup route get
+        router.get("/signup", userController.renderSignUpForm);
+
+        // signup route post
+        router.post("/signup", wrapAsync(userController.signUp));
+
+
+        //  login route get
+        router.get("/login", userController.renderLoginForm);
+
+
+        //   login post route
+        router.post(
+         "/login", saveRedirectUrl, passport.authenticate("local", { failureRedirect: "login", failureFlash: true, }), userController.logIn);
+
+         // profile route
+        router.get("/profile/:id/", isLoggedIn,  wrapAsync(userController.userProfile));
+
+
+        // logout route
+        router.get("/logout", userController.logOut);
+
+
+        // home
+        router.get("/",  userController.home);
+
+
+        // profile edit route
+        router.get("/profile/:id/editProfile", isLoggedIn, upload.single("image"), wrapAsync(userController.editProfile));
+
+
+        // profile update edit route put
+        router.put("/profile/:id/editProfile",isLoggedIn, upload.single("image"), wrapAsync(userController.updateProfile));
+
+
+        // about
+        router.get("/about",  userController.about);
+
+        module.exports = router;
+
+        ```
+
+
+# Setting routes for Blog
+
++ ##  Controllers for blog
+
+    + #### Requirements 
+
+    ```js
+    const { Blog, Comment } = require("../models/blog");
+    ```
+    + #### User Blog Route Controller
+
+    ```js
+    module.exports.userBlogs = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const currentUser = req.user;
+        let posts;
+
+        if (id) {
+            // Fetch blogs for the specified user and populate the 'author' field
+            posts = await Blog.find({ author: id }).populate('author').populate('comments.author');
+        } else {
+            // Fetch blogs from all users and populate the 'author' field
+            posts = await Blog.find().populate('author').populate('comments.author');
+        }
+
+        res.render("blogs/index.ejs", { currentUser, posts }); // Pass currentUser and posts to the template
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).send("Internal Server Error");
+    }
+    };
+
+    ```
+
+    + #### Blog Post Route Controller
+
+    ```js
+    
+    module.exports.postInBlogs = async (req, res) => {
+    try {
+        const { title, message } = req.body;
+        
+        // Find the current user
+        const currentUser = req.user;
+        if (!currentUser) {
+            throw new Error("User not found");
+        }
+        
+        // Create the new blog post object
+        const newPost = new Blog({
+            title: title,
+            message: message,
+            author: currentUser._id // Assuming currentUser is an instance of User model
+        });
+        
+        // Save the new post
+        await newPost.save();
+
+        req.flash("success", "Successfully posted in blogs.");
+        res.redirect('/blogs');
+    } catch (err) {
+        console.error(err);
+        req.flash("error", "Failed to post in blogs.");
+        res.redirect('/blogs');
+    }
+    };
+    ```
+
+    + #### Delete Blog Route Controller
+
+    ```js
+    module.exports.deleteBlog = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const blog = await Blog.findById(id);
+        console.log(blog);
+        // Check if the blog post exists and if the current user is the author
+        if (!blog) {
+            req.flash("error", "Blog not found.");
+            return res.redirect("/blogs");
+        }
+        if (!blog.author.equals(req.user._id)) {
+            req.flash("error", "You are not authorized to delete this blog.");
+            return res.redirect("/blogs");
+        }
+
+        // If the user is authorized, delete the blog post
+        await Blog.findByIdAndDelete(id);
+        req.flash("success", "Blog deleted successfully.");
+        res.redirect("/blogs");
+    } catch (error) {
+        console.error("Error deleting blog:", error);
+        req.flash("error", "Failed to delete blog.");
+        res.redirect("/blogs");
+    }
+    };
+    ```
+
+    + #### Post Comment in Blog controller
+
+    ```js
+    module.exports.postComment = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const blog = await Blog.findById(id);
+        if (!blog) {
+            req.flash("error", "Blog not found.");
+            return res.redirect("/blogs");
+        }
+
+        const { text } = req.body;
+        const author = req.user._id;
+
+        const newComment = new Comment({ text, author });
+        blog.comments.push(newComment);
+        await blog.save();
+
+        req.flash("success", "Comment added successfully.");
+        res.redirect("/blogs");
+    } catch (error) {
+        console.error("Error posting comment:", error);
+        req.flash("error", "Failed to add comment.");
+        res.redirect("/blogs");
+    }
+    };
+    ```
++ ## Routes for Blogs
+
+     + #### Requirements
+
+        ```js
+            // routes/blogRoutes.js
+        const express = require("express");
+        const router = express.Router();
+        const userController = require("../controllers/blogController");
+        const { isLoggedIn } = require("../middleware");
+        ```
+        ```js
+        router.get("/", isLoggedIn ,  userController.userBlogs);
+        router.post("/", isLoggedIn , userController.postInBlogs);
+        router.delete("/:id/delete", isLoggedIn,   userController.deleteBlog);
+        router.post("/:id/comments", isLoggedIn, userController.postComment);
+
+        module.exports = router;
+        ```
+
+# Setting routes for Review
+
++ ##  Controllers for Post Review
+
+    + #### Requirements 
+
+    ```js
+    const Review = require("../models/review.js");
+    const Listing = require("../models/listing.js");
+    ```
+    + #### Post Review Controller
+
+    ```js
+    // Post Route
+    module.exports.postReview = async (req, res) => {
+    let listing = await Listing.findById(req.params.id);
+    let newReview = new Review(req.body.review);
+    newReview.author = req.user._id;
+   
+    listing.reviews.push(newReview);
+    await newReview.save();
+    await listing.save();
+
+    console.log("New Review save");
+
+
+    res.redirect(`/listings/${listing._id}`);
+    };
+
+    ```
+
+    + #### Delete Review Controller 
+
+    ```js
+    // Delete route for review
+
+    module.exports.deleteReview = async (req, res) => {
+    let { id, reviewId } = req.params;
+    await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } })
+    await Review.findByIdAndDelete(reviewId);
+    res.redirect(`/listings/${id}`);
+
+    };
+
+    ```
+
+    + ## Routes for Review
+
+     + #### Requirements
+
+        ```js
+        const express = require("express");
+        const router = express.Router({ mergeParams: true });
+        const wrapAsync = require("../utils/wrapAsync.js");
+        const { validateReview, isLoggedIn, isReviewAuthor } = require("../middleware.js");
+        const reviewController = require("../controllers/review.js");
+        ```
+        ```js
+            // Post Route
+
+            router.post("/", isLoggedIn, validateReview, wrapAsync(reviewController.postReview));
+
+        // Delete route for review
+
+            router.delete("/:reviewId", isLoggedIn, isReviewAuthor, wrapAsync(reviewController.deleteReview));
+
+            module.exports = router;
+
+        ```
+
+# Models / Schema
+
++ Listing Model
+
+    ```js
+
+    ```
+
++ User Model
+
+    ```js
+
+    ```
++ Blog Model
+
+    ```js
+
+    ```
++ Review Model
+
+    ```js
+
+    ```
+
+# Session 
+
+```js
+
+     const sessionOption = {
+         store,
+         secret: process.env.SECRET,
+         resave: false,
+         saveUninitialized: true,
+         cookie: {
+        expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        httpOnly: true,  // secure from crossconnection attack
+          },
+
+          };
+
+
+
+        app.use(session(sessionOption));
+         app.use(passport.initialize());
+         app.use(passport.session());
+
+
+         passport.serializeUser(User.serializeUser());
+          passport.deserializeUser(User.deserializeUser());
+
+        app.use(flash());
+
+```
+
+# Authentication
+
+```js
+        //  local strategy
+        passport.use(new LocalStrategy(User authenticate()));
+```
+
+# Cloudinary Configuration
+
+```js
+
+    const cloudinary = require('cloudinary').v2;
+    const { CloudinaryStorage } = require('multer-storage-cloudinary');
+
+    cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUD_API_KEY,
+    api_secret: process.env.CLOUD_API_SECRET,
+    });
+
+    const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'couchSurfing_DEV',
+        allowedFormat: ["png", "jpg", "jpeg"],
+    },
+    });
+
+    module.exports = {
+    cloudinary, storage,
+    };
+
+```
+
+# Server side Model Validation 
+
+```js
+const Joi = require("joi");
+
+module.exports.listingSchema = Joi.object({
+    listing: Joi.object({
+        title: Joi.string().required(),
+        description: Joi.string().required(),
+        location: Joi.string().required(),
+        country: Joi.string().required(),
+        price: Joi.number().required().min(0),
+        image: Joi.string().allow("", null)
+
+
+    }).required()
+});
+
+
+
+module.exports.reviewSchema = Joi.object({
+    review: Joi.object({
+        rating: Joi.number().required().min(1).max(5),
+        comment: Joi.string().required(),
+    }).required()
+});
+```
+
