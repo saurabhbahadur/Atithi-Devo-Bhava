@@ -3,6 +3,7 @@
 # [Demo](https://atithidevobhava.onrender.com)
 
 <h1>Introduction</h1>
+
 + Atithi Devo Bhava is a platform designed to solve the common problems faced by solo travelers, such as the need for local guidance and managing high travel expenses. It connects solo travelers (Guests) with local hosts, allowing them to explore new places while gaining an authentic cultural experience.
 
 ### Target Audience:
