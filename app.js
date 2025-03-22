@@ -17,6 +17,7 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 
+// online db connection
 const dbURL = process.env.ATLASDB_URL;
 
 app.set("view engine", "ejs");
